@@ -26,12 +26,8 @@ Member functions:
 '''
 
 class Course(models.Model):
-    # department = Department() TODO: Implement Department class
+    # department = Department() TODO: GET Department CLASS FROM MADHAV
     code = models.IntegerField()
     info = models.CharField()
     ratings = models.JSONField(default=list)
-
-    def __str__(self) -> str:
-        # return f"{self.department} {self.code}" # After Department class is implemented
-        return f"{self.code}"
 
