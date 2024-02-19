@@ -1,3 +1,5 @@
+from tkinter import NO
+from turtle import mode
 from django.db import models
 
 '''
@@ -27,11 +29,12 @@ Member functions:
 
 class Course(models.Model):
     # department = Department() TODO: Implement Department class
-    code = models.IntegerField()
-    info = models.CharField()
+    department = models.CharField(max_length=10)
+    code = models.PositiveIntegerField()
+    info = models.CharField(max_length=1000)
     ratings = models.JSONField(default=list)
 
     def __str__(self) -> str:
-        # return f"{self.department} {self.code}" # After Department class is implemented
-        return f"{self.code}"
+        return f"{self.department} {self.code}"
+        # return f"{self.code}"
 

@@ -20,6 +20,6 @@ from . import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    # path('dept/courses', views.course_list), TODO: implement Department class
-    path('dept/courses/<int:code>', views.course),
+    path('dept/courses/', views.course_list),
+    path('dept/courses/<int:id>', views.course),
 ]
