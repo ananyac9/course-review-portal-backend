@@ -51,4 +51,4 @@ def course(request, id):
             course.ratings.append(new_rating)
             course.save()
             return JsonResponse({"success": "Rating added"}, status=200)
-        return JsonResponse({"error": "Invalid rating"}, status=400)
+        return JsonResponse({"error": "Rating should be between 0 and 5 in steps of 0.5"}, status=400)
