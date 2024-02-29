@@ -1,10 +1,11 @@
 import re
 from tkinter.messagebox import RETRY
-from .models import Course
+from .models import Course, department
 from .serializers import CourseSerializer
+from .serializers import departmentSerializer
 from rest_framework.decorators import api_view
-# from rest_framework.response import Response
-# from rest_framework import status
+from rest_framework.response import Response
+from rest_framework import status
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import JsonResponse
 
@@ -13,6 +14,18 @@ def course_list(request):
     serializer = CourseSerializer(courses, many=True)
     # return Response(serializer.data)
     return JsonResponse({"courses": serializer.data})
+
+@api_view(['GET', 'POST'])
+def department_list(request):
+    if request.method == 'GET':
+        dept = department.objects.all()
+        serializer = departmentSerializer(dept, many=True)
+        return JsonResponse({"departments": serializer.data})
+    if request.method == 'POST':
+        serializer= departmentSerializer(data= request.data)
+        if serializer.is_valid(): # add validity checking function
+            serializer.save()
+            return Response(serializer.data, status = status.HTTP_201_CREATED)
 
 @api_view(['GET', 'POST']) # TODO: Implement PUT and DELETE
 def course(request, id):
