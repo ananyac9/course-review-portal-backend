@@ -1,5 +1,3 @@
-from tkinter import NO
-from turtle import mode
 from django.db import models
 
 '''
