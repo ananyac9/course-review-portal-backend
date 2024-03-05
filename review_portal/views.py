@@ -24,6 +24,12 @@ def view_course(request, id):
         new_rating = float(request.data.get('rating'))
         if(0 <= new_rating <= 5 and new_rating % 0.5 == 0):
             course.ratings.append(new_rating)
+            course.average_rating = sum(course.ratings) / len(course.ratings)
             course.save()
             return JsonResponse({"success": "Rating added"}, status=200)
         return JsonResponse({"error": "Rating should be between 0 and 5 in steps of 0.5"}, status=400)
+
+# DEBUGGING ONLY
+def remove_all_courses(request):
+    Course.objects.all().delete()
+    return JsonResponse({"success": "All courses removed"}, status=200)

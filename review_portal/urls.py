@@ -20,6 +20,7 @@ from . import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('dept/courses/', views.course_list),
-    path('dept/courses/<int:id>', views.view_course),
+    path('dept/courses/', views.course_list), # should be dept/:dept_id
+    path('dept/courses/<int:id>', views.view_course), # should be dept/:dept_id/courses/:course_id
+    # path('remove/all', views.remove_all_courses), # DEBUGGING ONLY
 ]
