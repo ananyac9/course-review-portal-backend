@@ -1,5 +1,3 @@
-from tkinter import NO
-from turtle import mode
 from django.db import models
 
 '''
@@ -32,7 +30,8 @@ class Course(models.Model):
     department = models.CharField(max_length=10)
     code = models.PositiveIntegerField()
     info = models.CharField(max_length=1000)
-    ratings = models.JSONField(default=list)
+    ratings = models.JSONField(default=list, blank=True)
+    average_rating = models.FloatField(default=0)
 
     def __str__(self) -> str:
         return f"{self.department} {self.code}"
