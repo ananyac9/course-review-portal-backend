@@ -37,3 +37,9 @@ class Course(models.Model):
         return f"{self.department} {self.code}"
         # return f"{self.code}"
 
+class department(models.Model):
+    name = models.CharField(max_length=10)
+    course = models.CharField(max_length=20)
+    def __str__(self) -> str:
+        return self.course
+        
