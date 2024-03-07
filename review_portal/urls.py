@@ -23,8 +23,8 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('dept/', views.department_list),
     path('dept/<int:id>/', views.department_detail),
-    path('dept/courses/<int:id>', views.view_course), # should be dept/:dept_id/courses/:course_id
-    # path('remove/all', views.remove_all_courses), # DEBUGGING ONLY
+    path('dept/<int:dept_id>/courses/<int:course_id>', views.view_course),
+    # path('seed/', views.seed_database), # DEBUGGING ONLY
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)

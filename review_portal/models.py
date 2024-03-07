@@ -27,11 +27,13 @@ Member functions:
 
 class Department(models.Model):
     name = models.CharField(max_length=10)
-    # course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='courses')    
+
     def __str__(self) -> str:
         return self.name
 
+
 class Course(models.Model):
+    # should I change this attribute's name to 'department_id'?
     department = models.ForeignKey(Department, on_delete=models.CASCADE)
     code = models.PositiveIntegerField()
     info = models.CharField(max_length=1000)
@@ -40,4 +42,14 @@ class Course(models.Model):
 
     def __str__(self) -> str:
         return f"{self.department.name}{self.code}"
-        # return f"{self.code}"
+
+    # def rank(self):
+    #     return sorted(self.department.courses, key=lambda x: x.average_rating, reverse=True).index(self) + 1
+
+
+# class Department(models.Model):
+#     name = models.CharField(max_length=10)
+#     course = models.CharField(max_length=20)
+#     courses = models.ManyToManyField(Course, related_name='departments')
+#     def __str__(self) -> str:
+#         return self.course

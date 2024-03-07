@@ -8,6 +8,7 @@ class CourseSerializer(serializers.ModelSerializer):
         fields = ["id", "department", "code", "info", "ratings", "average_rating"]
 
 class DepartmentSerializer(serializers.ModelSerializer):
+    courses = CourseSerializer(many=True, read_only=True)
     class Meta:
         model = Department
-        fields = ["id", "name", "course"]
+        fields = ["id", "name", "courses"]

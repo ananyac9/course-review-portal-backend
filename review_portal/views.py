@@ -21,35 +21,55 @@ def department_list(request, format=None):
             return JsonResponse({"success": "Course added"}, status=status.HTTP_201_CREATED)
         return JsonResponse({"error": "Invalid request"}, status=status.HTTP_400_BAD_REQUEST)
 
+
 @api_view(['GET', 'PUT', 'DELETE'])
 def department_detail(request, id, format=None):
     try:
-        dept = Department.objects.get(pk=id)
+        department = Department.objects.get(pk=id)
+        courses = Course.objects.filter(department=department)
     except ObjectDoesNotExist:
-        return Response(status=status.HTTP_404_NOT_FOUND)
+        return JsonResponse({"error": "Department not found"}, status=status.HTTP_404_NOT_FOUND)
+    
     if request.method == 'GET':
-        serializer = DepartmentSerializer(dept, many=False)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        dept_info = {
+            "id": id,
+            "name": department.name,
+            "courses": [
+                {
+                    "id": course.pk,  # Fix: Use course.pk instead of course.id
+                    "code": course.code,
+                    "info": course.info,
+                    "ratings": course.ratings,
+                    "average_rating": course.average_rating
+                } 
+                for course in courses
+            ]
+        }
+        return JsonResponse(dept_info, status=status.HTTP_200_OK)
+    
     if request.method == 'PUT':
-        serializer = DepartmentSerializer(dept, data=request.data, partial=True)
+        serializer = DepartmentSerializer(department, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
-            return Response(serializer.data, status=200)
-        return Response(serializer.errors, status=400)
+            return JsonResponse({"success": "Course updated"}, status=status.HTTP_200_OK)
+        return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
     if request.method == 'DELETE':
-        dept.delete()
-        return Response(status=204)
+        department.delete()
+        return JsonResponse({"success": "Department removed"}, status=status.HTTP_204_NO_CONTENT)
 
-@api_view(['GET', 'POST', 'PUT', 'DELETE']) # TODO: Implement PUT and DELETE
-def view_course(request, id):
+
+@api_view(['GET', 'POST', 'PUT', 'DELETE'])
+def view_course(request, dept_id, course_id, format=None):
     try:
-        course = Course.objects.get(pk=id)
+        department = Department.objects.get(pk=dept_id)
+        course = Course.objects.get(pk=course_id, department=department)
     except ObjectDoesNotExist:
-        return JsonResponse({"error": "Course not found"}, status=404)
+        return JsonResponse({"error": "Course not found"}, status=status.HTTP_404_NOT_FOUND)
     
     if request.method == 'GET':
         serializer = CourseSerializer(course, many=False)
-        return JsonResponse(serializer.data, status=200)
+        return JsonResponse(serializer.data, status=status.HTTP_200_OK)
     
     if request.method == 'POST':
         new_rating = float(request.data.get('rating'))
@@ -57,23 +77,35 @@ def view_course(request, id):
             course.ratings.append(new_rating)
             course.average_rating = sum(course.ratings) / len(course.ratings)
             course.save()
-            return JsonResponse({"success": "Rating added"}, status=200)
-        return JsonResponse({"error": "Rating should be between 0 and 5 in steps of 0.5"}, status=400)
+            return JsonResponse({"success": "Rating added"}, status=status.HTTP_201_CREATED)
+        return JsonResponse({"error": "Rating should be between 0 and 5 in steps of 0.5"}, status=status.HTTP_400_BAD_REQUEST)
     
     if request.method == 'PUT':
         serializer = CourseSerializer(course, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
-            return JsonResponse(serializer.data, status=200)
-        return JsonResponse(serializer.errors, status=400)
+            return JsonResponse({"success": "Course updated"}, status=status.HTTP_200_OK)
+        return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
     if request.method == 'DELETE':
         course.delete()
-        return JsonResponse({"success": "Course removed"}, status=204)
+        return JsonResponse({"success": "Course removed"}, status=status.HTTP_204_NO_CONTENT)
     
-    return JsonResponse({"error": "Invalid request"}, status=400)
+    return JsonResponse({"error": "Invalid request"}, status=status.HTTP_400_BAD_REQUEST)
+
 
 # DEBUGGING ONLY
-def remove_all_courses(request):
+def seed_database(request):
+    Department.objects.all().delete()
     Course.objects.all().delete()
-    return JsonResponse({"success": "All courses removed"}, status=200)
+
+    Department.objects.create(name="CS")
+    Department.objects.create(name="MA")
+    Department.objects.create(name="BB")
+    
+    Course.objects.create(department=Department.objects.get(name="CS"), code=105, info="Discrete Structures")
+    Course.objects.create(department=Department.objects.get(name="CS"), code=108, info="Software Systems Lab")
+    Course.objects.create(department=Department.objects.get(name="MA"), code=110, info="Linear Algebra")
+    Course.objects.create(department=Department.objects.get(name="BB"), code=101, info="Biology")
+    
+    return JsonResponse({"success": "Database seeded"}, status=status.HTTP_204_NO_CONTENT)
