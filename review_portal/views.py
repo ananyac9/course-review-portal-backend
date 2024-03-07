@@ -7,11 +7,6 @@ from rest_framework import status
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import JsonResponse
 
-# def course_list(request):
-#     courses = Course.objects.all()
-#     serializer = CourseSerializer(courses, many=True)
-#     return JsonResponse({"courses": serializer.data})
-
 @api_view(['GET', 'POST'])
 def department_list(request, format=None):
     if request.method == 'GET':
@@ -45,7 +40,7 @@ def department_detail(request, id, format=None):
         dept.delete()
         return Response(status=204)
 
-@api_view(['GET', 'POST']) # TODO: Implement PUT and DELETE
+@api_view(['GET', 'POST', 'PUT', 'DELETE']) # TODO: Implement PUT and DELETE
 def view_course(request, id):
     try:
         course = Course.objects.get(pk=id)
@@ -64,6 +59,19 @@ def view_course(request, id):
             course.save()
             return JsonResponse({"success": "Rating added"}, status=200)
         return JsonResponse({"error": "Rating should be between 0 and 5 in steps of 0.5"}, status=400)
+    
+    if request.method == 'PUT':
+        serializer = CourseSerializer(course, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return JsonResponse(serializer.data, status=200)
+        return JsonResponse(serializer.errors, status=400)
+    
+    if request.method == 'DELETE':
+        course.delete()
+        return JsonResponse({"success": "Course removed"}, status=204)
+    
+    return JsonResponse({"error": "Invalid request"}, status=400)
 
 # DEBUGGING ONLY
 def remove_all_courses(request):
