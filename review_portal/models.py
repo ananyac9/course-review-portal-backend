@@ -25,21 +25,19 @@ Member functions:
 --------------------------------------------------------------------------------------------------
 '''
 
+class Department(models.Model):
+    name = models.CharField(max_length=10)
+    # course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='courses')    
+    def __str__(self) -> str:
+        return self.name
+
 class Course(models.Model):
-    # department = Department() TODO: Implement Department class
-    department = models.CharField(max_length=10)
+    department = models.ForeignKey(Department, on_delete=models.CASCADE)
     code = models.PositiveIntegerField()
     info = models.CharField(max_length=1000)
     ratings = models.JSONField(default=list, blank=True)
     average_rating = models.FloatField(default=0)
 
     def __str__(self) -> str:
-        return f"{self.department} {self.code}"
+        return f"{self.department.name}{self.code}"
         # return f"{self.code}"
-
-class Department(models.Model):
-    name = models.CharField(max_length=10)
-    course = models.CharField(max_length=20)
-    def __str__(self) -> str:
-        return self.name
-        
