@@ -1,42 +1,42 @@
-import re
-from tkinter.messagebox import RETRY
-from .models import Course, department
+from .models import Course, Department
 from .serializers import CourseSerializer
-from .serializers import departmentSerializer
+from .serializers import DepartmentSerializer
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import JsonResponse
 
-def course_list(request):
-    courses = Course.objects.all()
-    serializer = CourseSerializer(courses, many=True)
-    return JsonResponse({"courses": serializer.data})
+# def course_list(request):
+#     courses = Course.objects.all()
+#     serializer = CourseSerializer(courses, many=True)
+#     return JsonResponse({"courses": serializer.data})
 
 @api_view(['GET', 'POST'])
 def department_list(request, format=None):
     if request.method == 'GET':
-        dept = department.objects.all()
-        serializer = departmentSerializer(dept, many=True)
+        dept = Department.objects.all()
+        serializer = DepartmentSerializer(dept, many=True)
         return JsonResponse({"departments": serializer.data})
     if request.method == 'POST':
-        serializer= departmentSerializer(data= request.data)
+        serializer= DepartmentSerializer(data=request.data)
         if serializer.is_valid(): # add validity checking function
             serializer.save()
-            return Response(serializer.data, status = status.HTTP_201_CREATED)
+            # return Response(serializer.data, status = status.HTTP_201_CREATED)
+            return JsonResponse({"success": "Course added"}, status=status.HTTP_201_CREATED)
+        return JsonResponse({"error": "Invalid request"}, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['GET', 'PUT', 'DELETE'])
 def department_detail(request, id, format=None):
     try:
-        dept = department.objects.get(pk=id)
+        dept = Department.objects.get(pk=id)
     except ObjectDoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
     if request.method == 'GET':
-        serializer = departmentSerializer(dept, many=False)
+        serializer = DepartmentSerializer(dept, many=False)
         return Response(serializer.data, status=status.HTTP_200_OK)
     if request.method == 'PUT':
-        serializer = departmentSerializer(dept, data=request.data, partial=True)
+        serializer = DepartmentSerializer(dept, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=200)
