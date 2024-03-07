@@ -40,6 +40,7 @@ class Course(models.Model):
 class Department(models.Model):
     name = models.CharField(max_length=10)
     course = models.CharField(max_length=20)
+    courses = models.ManyToManyField(Course, related_name='departments')
     def __str__(self) -> str:
         return self.course
         
