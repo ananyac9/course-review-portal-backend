@@ -12,6 +12,11 @@ def department_list(request, format=None):
     if request.method == 'GET':
         dept = Department.objects.all()
         serializer = DepartmentSerializer(dept, many=True)
+        courses = Course.objects.filter(department=dept).order_by('-average_rating')[:10]
+        course_serializer = CourseSerializer(courses, many=True)
+        department_data = serializer.data
+        department_data['top_courses'] = course_serializer.data
+        return Response(department_data, status=status.HTTP_200_OK)
         return JsonResponse({"departments": serializer.data})
     if request.method == 'POST':
         serializer= DepartmentSerializer(data=request.data)
