@@ -21,9 +21,9 @@ from rest_framework.urlpatterns import format_suffix_patterns
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('dept/', views.department_list),
-    path('dept/<int:id>/', views.department_detail),
-    path('dept/<int:dept_id>/courses/<int:course_id>', views.view_course),
+    path('dept/', views.department_list), # GET, POST
+    path('dept/<int:id>/', views.department_detail), # GET, PUT, DELETE
+    path('dept/<int:dept_id>/course/<int:course_id>', views.view_course), # GET, POST, PUT, DELETE
     # path('seed/', views.seed_database), # DEBUGGING ONLY
 ]
 
