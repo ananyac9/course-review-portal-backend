@@ -22,7 +22,7 @@ def department_list(request, format=None):
         return JsonResponse({"error": "Invalid request"}, status=status.HTTP_400_BAD_REQUEST)
 
 
-@api_view(['GET', 'PUT', 'DELETE'])
+@api_view(['GET', 'PUT', 'DELETE']) # POST?
 def department_detail(request, id, format=None):
     try:
         department = Department.objects.get(pk=id)

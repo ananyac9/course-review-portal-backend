@@ -44,7 +44,7 @@ class Course(models.Model):
         return f"{self.department.name}{self.code}"
 
     # def rank(self):
-    #     return sorted(self.department.courses, key=lambda x: x.average_rating, reverse=True).index(self) + 1
+    #     return sorted(self.department.course, key=lambda x: x.average_rating, reverse=True).index(self) + 1
 
 
 # class Department(models.Model):
