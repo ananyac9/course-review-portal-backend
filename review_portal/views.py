@@ -23,7 +23,7 @@ def department_list(request, format=None):
         if serializer.is_valid(): # add validity checking function
             serializer.save()
             # return Response(serializer.data, status = status.HTTP_201_CREATED)
-            return JsonResponse({"success": "Course added"}, status=status.HTTP_201_CREATED)
+            return JsonResponse({"success": "Department added"}, status=status.HTTP_201_CREATED)
         return JsonResponse({"error": "Invalid request"}, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -56,7 +56,7 @@ def department_detail(request, id, format=None):
         serializer = DepartmentSerializer(department, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
-            return JsonResponse({"success": "Course updated"}, status=status.HTTP_200_OK)
+            return JsonResponse({"success": "Department updated"}, status=status.HTTP_200_OK)
         return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
     if request.method == 'DELETE':
