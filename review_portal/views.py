@@ -98,7 +98,14 @@ def view_course(request, dept_id, course_id, format=None):
     
     return JsonResponse({"error": "Invalid request"}, status=status.HTTP_400_BAD_REQUEST)
 
-
+def get_top_courses_in_department(department_id): #function to get top 10 courses in a dep
+    try:
+        department = Department.objects.get(pk=department_id)
+    except ObjectDoesNotExist:
+        return None
+    courses_in_department = Course.objects.filter(department=department)
+    top_courses = courses_in_department.order_by('-average_rating')[:10]
+    return top_courses
 # DEBUGGING ONLY
 def seed_database(request):
     Department.objects.all().delete()
