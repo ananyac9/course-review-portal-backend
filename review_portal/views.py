@@ -97,15 +97,16 @@ def view_course(request, dept_id, course_id, format=None):
         return JsonResponse({"success": "Course removed"}, status=status.HTTP_204_NO_CONTENT)
     
     return JsonResponse({"error": "Invalid request"}, status=status.HTTP_400_BAD_REQUEST)
-
-def get_top_courses_in_department(department_id): #function to get top 10 courses in a dep
+@api_view(['GET'])
+def top_rated_courses(request, dept_id):
     try:
-        department = Department.objects.get(pk=department_id)
+        department = Department.objects.get(pk=dept_id)
     except ObjectDoesNotExist:
-        return None
-    courses_in_department = Course.objects.filter(department=department)
-    top_courses = courses_in_department.order_by('-average_rating')[:10]
-    return top_courses
+        return JsonResponse({"error": "Department not found"}, status=404)
+    
+    top_courses = Course.objects.filter(department=department).order_by('-average_rating')[:10]
+    serializer = CourseSerializer(top_courses, many=True)
+    return JsonResponse({"top_courses": serializer.data}, status=200)
 # DEBUGGING ONLY
 def seed_database(request):
     Department.objects.all().delete()
